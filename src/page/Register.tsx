@@ -1,6 +1,12 @@
-import { User, Lock, Mail, UserPlus, ArrowRight } from "lucide-react";
+// ─────────────────────────────────────────────────────────
+// src/pages/Register.tsx
+// ─────────────────────────────────────────────────────────
+
+import { useState } from "react";
+import { User, Lock, Mail, UserPlus, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import Spline from "@splinetool/react-spline";
 import { UserLogo } from "../components/UserReg";
+import { registerUser } from "../services/auth.service";
 
 interface RegisterProps {
   onRegister: () => void;
@@ -8,9 +14,63 @@ interface RegisterProps {
 }
 
 export const Register = ({ onRegister, onBackToLogin }: RegisterProps) => {
+  // ── Estado ──────────────────────────────────────────────
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
+
+  // ── Lógica de Registro ──────────────────────────────────
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    // Validaciones locales
+    if (!nombre.trim() || !apellido.trim() || !correo.trim() || !password.trim()) {
+      setError("Por favor completa todos los campos.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo)) {
+      setError("Ingresa un correo electrónico válido.");
+      return;
+    }
+
+    setCargando(true);
+
+    try {
+      await registerUser({
+        nombre: nombre.trim(),
+        apellido: apellido.trim(),
+        correo: correo.trim(),
+        password,
+      });
+
+      // Notificar al padre — puede redirigir al login o al chat
+      onRegister();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Ocurrió un error inesperado.");
+      }
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  // ── Render ──────────────────────────────────────────────
   return (
     <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-[#FDFCF0]">
-      {/* CAPA DE FONDO: Escena de Spline */}
+      {/* FONDO: Escena Spline */}
       <div className="fixed inset-0 z-0 w-screen h-screen overflow-hidden">
         <Spline
           style={{
@@ -23,20 +83,9 @@ export const Register = ({ onRegister, onBackToLogin }: RegisterProps) => {
         />
       </div>
 
-      {/* CONTENIDO FRONT: Tarjeta Ampliada para Registro */}
-      <div
-        className="
-          w-full max-w-md
-          rounded-[32px]
-          p-10
-          relative z-10
-          overflow-hidden
-          bg-white/10
-          backdrop-blur-[2px]
-          border border-white/20
-          shadow-[0_8px_32px_rgba(0,0,0,0.25)]
-        "
-      >
+      {/* TARJETA */}
+      <div className="w-full max-w-md rounded-[32px] p-10 relative z-10 overflow-hidden bg-white/10 backdrop-blur-[2px] border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
+
         {/* Reflejos internos */}
         <div className="absolute inset-0 rounded-[32px] border border-white/10 pointer-events-none" />
         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
@@ -52,8 +101,9 @@ export const Register = ({ onRegister, onBackToLogin }: RegisterProps) => {
           </p>
         </div>
 
-        {/* FORMULARIO: Nombre, Apellido, Correo y Contraseña */}
-        <div className="space-y-4 text-left relative z-10">
+        {/* FORMULARIO */}
+        <form onSubmit={handleRegister} className="space-y-4 text-left relative z-10" noValidate>
+
           {/* Campo: Nombre */}
           <div className="relative">
             <User
@@ -63,7 +113,10 @@ export const Register = ({ onRegister, onBackToLogin }: RegisterProps) => {
             <input
               type="text"
               placeholder="Nombre"
-              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              disabled={cargando}
+              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600 disabled:opacity-60"
             />
           </div>
 
@@ -76,7 +129,10 @@ export const Register = ({ onRegister, onBackToLogin }: RegisterProps) => {
             <input
               type="text"
               placeholder="Apellido"
-              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600"
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
+              disabled={cargando}
+              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600 disabled:opacity-60"
             />
           </div>
 
@@ -89,7 +145,10 @@ export const Register = ({ onRegister, onBackToLogin }: RegisterProps) => {
             <input
               type="email"
               placeholder="Correo electrónico"
-              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              disabled={cargando}
+              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600 disabled:opacity-60"
             />
           </div>
 
@@ -102,18 +161,39 @@ export const Register = ({ onRegister, onBackToLogin }: RegisterProps) => {
             <input
               type="password"
               placeholder="Contraseña"
-              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={cargando}
+              className="w-full bg-white/80 border border-[#E8E8E8] rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#7A9D96] transition-colors text-slate-600 disabled:opacity-60"
             />
           </div>
-        </div>
 
-        {/* BOTÓN DE ACCIÓN */}
-        <button
-          onClick={onRegister}
-          className="w-full bg-[#A8E6CF] hover:bg-[#97D8C0] text-[#557B74] font-bold py-4 rounded-2xl mt-8 transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 relative z-10"
-        >
-          Registrarse <ArrowRight size={18} />
-        </button>
+          {/* Mensaje de error */}
+          {error && (
+            <div className="flex items-center gap-2 text-red-500 text-sm bg-red-50/80 border border-red-200 rounded-xl px-4 py-2">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* BOTÓN */}
+          <button
+            type="submit"
+            disabled={cargando}
+            className="w-full bg-[#A8E6CF] hover:bg-[#97D8C0] text-[#557B74] font-bold py-4 rounded-2xl mt-4 transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 relative z-10 disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
+          >
+            {cargando ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                Registrando...
+              </>
+            ) : (
+              <>
+                Registrarse <ArrowRight size={18} />
+              </>
+            )}
+          </button>
+        </form>
 
         {/* ENLACE PARA VOLVER */}
         <p
