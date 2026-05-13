@@ -1,50 +1,48 @@
-const OpenAI = require("openai");
+const generarRespuestaIA = async (texto, contexto = "") => {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      return "Estoy aquí para escucharte. Cuéntame un poco más sobre cómo te sientes.";
+    }
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Eres Orbyn, un asistente emocional empático. Responde en español, con tono cálido, breve y útil. No des diagnósticos médicos.",
+          },
+          {
+            role: "user",
+            content: `${contexto}\n\nUsuario: ${texto}`,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 180,
+      }),
+    });
 
-const generarRespuestaEmocional = async ({
-  textoUsuario,
-  emocion,
-  problema,
-  recomendaciones
-}) => {
-  const prompt = `
-Eres un asistente emocional llamado Orbyn.
-Tu tarea es responder de forma empática, breve y segura.
+    const data = await response.json();
 
-Texto del usuario:
-"${textoUsuario}"
+    if (!response.ok) {
+      console.error("Error OpenAI:", data);
+      return "Estoy aquí para apoyarte. No pude generar una respuesta avanzada en este momento, pero puedo acompañarte.";
+    }
 
-Emoción detectada:
-${emocion}
-
-Problema posible:
-${problema}
-
-Recomendaciones base:
-${recomendaciones.join(", ")}
-
-Genera una respuesta en español con:
-1. Validación emocional
-2. Explicación breve del posible problema
-3. 3 recomendaciones concretas
-4. Cierre amable
-
-No diagnostiques enfermedades.
-No digas que eres psicólogo.
-Si detectas riesgo grave, recomienda buscar ayuda profesional.
-`;
-
-  const response = await client.responses.create({
-    model: "gpt-4.1-mini",
-    input: prompt
-  });
-
-  return response.output_text;
+    return (
+      data.choices?.[0]?.message?.content ||
+      "Estoy aquí para escucharte. Cuéntame un poco más."
+    );
+  } catch (error) {
+    console.error("Error en generarRespuestaIA:", error);
+    return "Estoy aquí para apoyarte. Ocurrió un problema generando la respuesta.";
+  }
 };
 
-module.exports = {
-  generarRespuestaEmocional
-};
+module.exports = { generarRespuestaIA };
