@@ -26,8 +26,10 @@ export const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
-
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://iaassistantemotional-production.up.railway.app/api";
+  
   useEffect(() => {
     const element = orbContainerRef.current;
     if (!element) return;

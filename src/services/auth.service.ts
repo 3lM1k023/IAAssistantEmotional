@@ -2,8 +2,10 @@
 // src/services/authService.ts
 // ─────────────────────────────────────────────────────────
  
-const BASE_URL = "http://localhost:4000/api/auth";
- 
+const BASE_URL = `${
+  import.meta.env.VITE_API_URL ||
+  "https://iaassistantemotional-production.up.railway.app/api"
+}/auth`; 
 // ── Tipos ─────────────────────────────────────────────────
  
 export interface RegisterData {
