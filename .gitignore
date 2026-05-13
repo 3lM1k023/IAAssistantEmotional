@@ -7,12 +7,27 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencias
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+
+# Variables de entorno
+.env
+backend/.env
 *.local
 
-# Editor directories and files
+# Python
+flask_ml/venv/
+__pycache__/
+*.pyc
+
+# Modelo grande
+flask_ml/mejor_modelo_bert_cv/model.safetensors
+
+# Editor
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,6 +37,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-"node_modules/" 
-"dist/" 
-".env" 

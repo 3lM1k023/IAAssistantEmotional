@@ -3,11 +3,11 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/auth.routes");
+const emotionRoutes = require("./routes/emotion.routes");
 
 const app = express();
 
 app.use(cors());
-
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -15,6 +15,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/emotion", emotionRoutes);
 
 // ← Esta línea es la que faltaba
 const PORT = process.env.PORT || 4000;
