@@ -1,13 +1,31 @@
 import { useState } from "react";
 import { Welcome } from "./page/Welcome";
 import { Chat } from "./page/Chat";
+import { Register } from "./page/Register";
 
 function App() {
-  const [hasStarted, setHasStarted] = useState(false);
+  // Ahora manejamos 3 estados: 'welcome', 'register', o 'chat'
+  const [currentView, setCurrentView] = useState<
+    "welcome" | "register" | "chat"
+  >("welcome");
 
   return (
     <>
-      {hasStarted ? <Chat /> : <Welcome onStart={() => setHasStarted(true)} />}
+      {currentView === "welcome" && (
+        <Welcome
+          onStart={() => setCurrentView("chat")}
+          onGoToRegister={() => setCurrentView("register")}
+        />
+      )}
+
+      {currentView === "register" && (
+        <Register
+          onRegister={() => setCurrentView("welcome")}
+          onBackToLogin={() => setCurrentView("welcome")}
+        />
+      )}
+
+      {currentView === "chat" && <Chat />}
     </>
   );
 }
