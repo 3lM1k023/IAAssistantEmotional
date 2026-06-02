@@ -1,3 +1,5 @@
+<img width="1858" height="922" alt="image" src="https://github.com/user-attachments/assets/b7f3f1cf-566c-42b3-b405-af4fc208cf35" />
+
 # IA Assistant Emotional
 
 ## Overview
