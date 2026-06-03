@@ -4,7 +4,7 @@
 
 ## Overview
 
-IA Assistant Emotional is an AI-powered emotional support assistant designed to identify emotions from user-written text and provide empathetic guidance through Natural Language Processing (NLP), Machine Learning, Generative AI, and Voice Synthesis.
+IA Assistant Emotional is an AI-powered emotional support assistant designed to identify emotions from user-written text and provide empathetic guidance through Natural Language Processing (NLP), Machine Learning, Generative AI, and Voice Synthesis. 
 
 The platform combines a Multilingual BERT model, OpenAI API, Node.js, Flask, and ElevenLabs to create an interactive emotional support experience capable of understanding user emotions and responding through both text and voice.
 
