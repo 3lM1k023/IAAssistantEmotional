@@ -282,7 +282,6 @@ Best F1 Score:
 A complete demonstration of the project can be found here:
 
 ```md
-[Watch Demo Video](YOUR_YOUTUBE_LINK)
 https://youtu.be/nQPfFH5zI4s
 ```
 
@@ -295,7 +294,6 @@ Machine Learning development and experimentation were performed using Google Col
 Training Notebook:
 
 ```md
-https://colab.research.google.com/YOUR_NOTEBOOK_LINK
 https://colab.research.google.com/drive/1zXTqkhq3qYLP0Dh7ipmM1cIXWS97Td2l?usp=sharing
 ```
 
